@@ -39,6 +39,7 @@ function username_exists($username){
 	return mysqli_num_rows($res) > 0;
 }
 
+// Function checks if the email is taken 
 function email_taken($email){
     global $conn;
     $query = "SELECT * FROM users WHERE email='$email'";
@@ -46,6 +47,7 @@ function email_taken($email){
 	return mysqli_num_rows($res) > 0;
 }
 
+// Function checks that all the required boxes are filled
 function checkRequirments($username, $name, $surname, $email, $password){
     global $error;
 
@@ -86,7 +88,7 @@ if(isset($_POST["submit"])){
 
 ?>
 <div class="container">
-    <h2>Create an account:</h2>
+    <h2>Create an account</h2>
         <form action="register.php" method="POST" class="form-group">
         <div class="form-group">
             <h5>Required:</h5>
