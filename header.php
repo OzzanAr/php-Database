@@ -17,36 +17,45 @@
     <title>Cool Ad Website</title>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .navbar .navbar-nav {
+ 			display: inline-block;
+  			float: none;
+  			vertical-align: top;
+        }
+    </style>
 </head>
 
-<div>
+<div class="container-fluid p-3 bg-primary text-white text-center">
     <h1>Cool Ad Website</h1>
     <p>Get the coolest things here!</p>
 </div>
 
 <body>
-    <nav>
-        <div>
-            <ul>
-            <li>
-                <a href="index.php">Home</a></li>
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container-fluid">
+            <ul class="nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a href="index.php" class="nav-link">Home</a></li>
             </li>
             <?php
             if(isset($_SESSION["USER_ID"])){
 				?>
-				<li>
-					<a href="publish.php">Publish Ad</a></li>
-				<li>
-					<a href="myads.php">My Ads</a></li>
 				<li class="nav-item">
-					<a href="logout.php">Log out</a></li>
+					<a href="publish.php" class="nav-link">Publish Ad</a></li>
+				<li class="nav-item">
+					<a href="myads.php" class="nav-link">My Ads</a></li>
+				<li class="nav-item">
+					<a href="logout.php" class="nav-link">Log out</a></li>
 				<?php
 			} else{
 				?>
 				<li class="nav-item">
-					<a href="login.php">Log in</a></li>
+					<a href="login.php" class="nav-link">Log in</a></li>
 				<li class="nav-item">
-					<a href="register.php">Register</a></li>
+					<a href="register.php" class="nav-link">Register</a></li>
 				<?php
 			}
 			?>
