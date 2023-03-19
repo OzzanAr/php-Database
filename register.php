@@ -39,6 +39,13 @@ function username_exists($username){
 	return mysqli_num_rows($res) > 0;
 }
 
+function email_taken($email){
+    global $conn;
+    $query = "SELECT * FROM users WHERE email='$email'";
+    $res = $conn->query($query);
+	return mysqli_num_rows($res) > 0;
+}
+
 function checkRequirments($username, $name, $surname, $email, $password){
     global $error;
 
@@ -61,8 +68,11 @@ if(isset($_POST["submit"])){
 	else if($_POST["password"] != $_POST["repeat_password"]){
 		$error = "Repeted password is not the same!";
 	}
-    elseif(username_exists($_POST["username"])){
+    else if(username_exists($_POST["username"])){
         $error = "Username already exists!";
+    }
+    else if(email_taken($_POST["email"])){
+        $error = "Email is already taken!";
     }
     // If any other errors occur during registiration
     else if(register_user($_POST["username"], $_POST["password"], $_POST["email"], $_POST["name"], $_POST["surname"], $_POST["address"], $_POST["zipcode"], $_POST["phone"] )){
