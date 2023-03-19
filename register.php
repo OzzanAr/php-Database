@@ -29,6 +29,16 @@ function register_user($username, $password, $email, $name, $surname, $address, 
 	}
 }
 
+// Function checks if the username exits in the database
+// By comparing the inserted user name with the submitted one
+function username_exists($username){
+	global $conn;
+	$username = mysqli_real_escape_string($conn, $username);
+	$query = "SELECT * FROM users WHERE username='$username'";
+	$res = $conn->query($query);
+	return mysqli_num_rows($res) > 0;
+}
+
 function checkRequirments($username, $name, $surname, $email, $password){
     global $error;
 
@@ -51,6 +61,9 @@ if(isset($_POST["submit"])){
 	else if($_POST["password"] != $_POST["repeat_password"]){
 		$error = "Repeted password is not the same!";
 	}
+    elseif(username_exists($_POST["username"])){
+        $error = "Username already exists!";
+    }
     // If any other errors occur during registiration
     else if(register_user($_POST["username"], $_POST["password"], $_POST["email"], $_POST["name"], $_POST["surname"], $_POST["address"], $_POST["zipcode"], $_POST["phone"] )){
 		header("Location: login.php");
