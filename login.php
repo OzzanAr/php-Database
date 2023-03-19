@@ -3,6 +3,7 @@ include_once('header.php');
 $error = "";
 
 // Validating the login
+// Function returns the id of the user if it exists
 function validate_login($username, $password){
 	global $conn;
 	$username = mysqli_real_escape_string($conn, $username);
@@ -16,6 +17,18 @@ function validate_login($username, $password){
 	return -1;
 }
 
+if(isset($_POST["submit"])){
+    // Checking the data entered
+    if($id = validate_login($_POST["username"], $_POST["password"])){
+        // Setting the user id to the logged in users id in the sesssion and redirecting to the index.php page
+        $_SESSION["USER_ID"] = $id;
+        header("Location: index.php");
+        die();
+    }
+    else{
+        $error = "Login failed!";
+    }
+}
 
 ?>
 <div class="container">
