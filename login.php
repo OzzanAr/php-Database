@@ -2,7 +2,19 @@
 include_once('header.php');
 $error = "";
 
-
+// Validating the login
+function validate_login($username, $password){
+	global $conn;
+	$username = mysqli_real_escape_string($conn, $username);
+    $pass = sha1($password);
+    // Getting the only the data that matches the entered username and password
+	$query = "SELECT * FROM users WHERE username='$username' AND password='$pass'";
+	$res = $conn->query($query);
+	if($user_obj = $res->fetch_object()){
+		return $user_obj->id;
+	}
+	return -1;
+}
 
 
 ?>
