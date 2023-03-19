@@ -3,6 +3,31 @@ include_once('header.php');
 
 $error = "";
 
+function register_user($username, $password, $email, $name, $surname, $address, $zipcode, $phone){
+    global $conn;
+    // Cheacking for SQL injections
+	$username = mysqli_real_escape_string($conn, $username);
+	$name = mysqli_real_escape_string($conn, $name);
+	$surname = mysqli_real_escape_string($conn, $surname);
+	$address = mysqli_real_escape_string($conn, $address);
+	$zipcode = mysqli_real_escape_string($conn, $zipcode);
+	$phone = mysqli_real_escape_string($conn, $phone);
+
+	// Hashing the password using SHA encryption algorithm
+	$pass = sha1($password);
+    // Adding the data to the database
+	$query = "INSERT INTO users (username, password, email, name, surname, address, zipcode, phone)
+	VALUES ('$username', '$pass', '$email', '$name', '$surname', NULLIF('$address',''), NULLIF('$zipcode',''), NULLIF('$phone',''));";
+
+    // Cheacking to see if the query is valid.
+	if($conn->query($query)){
+		return true;
+	}
+	else{
+		echo mysqli_error($conn);
+		return false;
+	}
+}
 
 function checkRequirments($username, $name, $surname, $email, $password){
     global $error;
@@ -27,6 +52,10 @@ if(isset($_POST["submit"])){
 		$error = "Repeted password is not the same!";
 	}
     // If any other errors occur during registiration
+    else if(register_user($_POST["username"], $_POST["password"], $_POST["email"], $_POST["name"], $_POST["surname"], $_POST["address"], $_POST["zipcode"], $_POST["phone"] )){
+		header("Location: login.php");
+		die();
+	}
 	else{
 		$error = "Error occured during registration!";
 	}
