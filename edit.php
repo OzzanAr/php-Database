@@ -1,6 +1,103 @@
 <?php
 include_once('header.php');
 
+function edit($rowId, $title, $desc, $categories ,$img){
+	global $conn;
+	$title = mysqli_real_escape_string($conn, $title);
+	$desc = mysqli_real_escape_string($conn, $desc);
+	$user_id = $_SESSION["USER_ID"];
+	$path = imageCheck($img);
+
+    // Updating the edit time
+	$unix_time = time();
+	$sql_timestamp = date('Y-m-d H:i:s', $unix_time);
+	$sub_time = date('Y-m-d H:i:s', strtotime($sql_timestamp . ' +1 hour')); // Add one hour to timestamp
+
+	$query = "UPDATE ads 
+			SET title = '$title', description = '$desc', image = '$path', submission_time = '$sub_time' 
+            WHERE id = $rowId;";
+				
+	// Sending the query into the database and using an if to check if anything is wrong
+	if($conn->query($query)){
+        $adsCategoryId = getIdAdsCategories($rowId);
+        $i = 0;
+		foreach($categories as $cat_id){
+            $id = intval($adsCategoryId[$i]['id']);
+			$category_query = "UPDATE ads_category SET category_id = '$cat_id' WHERE ads_id = $rowId AND id = $id";
+			$conn->query($category_query);
+            $i++;
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+function getIdAdsCategories($rowId){
+    global $conn;
+    $res = array();
+    $query = "SELECT id FROM ads_category WHERE ads_id = $rowId;" ;
+    $result = $conn->query($query);
+	$array = array();
+
+    while($row = $result->fetch_assoc()){
+		array_push($array, $row);
+	}
+
+    return $array;
+}
+
+function imageCheck($img){
+	$target_dir = "uploads/";
+	$target_file = $target_dir . basename($img["name"]);
+	$uploadOk = 1;
+	$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+	$path=$target_file;
+
+	$imageError = "";
+	// Check if image file is a actual image or fake image
+	$check = getimagesize($img["tmp_name"]);
+	if($check !== false) {
+		$uploadOk = 1;
+	} else {
+		$imageError = "File is not an image.";
+		$uploadOk = 0;
+	}
+
+	// Check if file already exists
+	if (file_exists($target_file)) {
+		$imageError = "Sorry, file already exists.";
+		$uploadOk = 0;
+	}
+
+	// Check file size
+	if ($img["size"] > 500000) {
+		$imageError = "Sorry, your file is too large.";
+		$uploadOk = 0;
+	}
+
+	// Allow certain file formats
+	if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+		$imageError = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+		$uploadOk = 0;
+	}
+
+	// Check if $uploadOk is set to 0 by an error
+	if ($uploadOk == 0) {
+		$error = "Sorry, your file was not uploaded; ". $imageError;	
+	} 
+	// if everything is ok, try to upload file
+	else {
+		if (move_uploaded_file($img["tmp_name"], $target_file)) {
+			return $path = $target_file;
+		} else {
+			$error = "Sorry, there was an error uploading your file.";
+		}
+	}
+}
+
 function getData($id){
 	global $conn;
 	$query = "SELECT * FROM ads WHERE id = '$id'";
@@ -35,6 +132,16 @@ else {
 $data = getData($rowId);
 
 $categories = getCategories();
+
+if(isset($_POST["submit"])){
+	if(edit($rowId, $_POST["title"], $_POST["description"] , $_POST["categories"], $_FILES["image"])){
+		header("Location: myads.php");
+		die();
+	}
+	else{
+		$error = "Error with submitting edit.";
+	}
+}
 
 ?>
 	<div class="container">
