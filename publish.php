@@ -1,9 +1,22 @@
 <?php
 include_once("header.php");
 
+$error = "";
 
+function getCategories(){
+   global $conn;
+	$query = "SELECT name FROM category";
+	$result = $conn->query($query);
+	$categories = array();
 
+	if($result->num_rows > 0){
+		while($row = $result->fetch_assoc()){
+			$categories[] = $row['name'];
+		}
+	}
 
+	return $categories;
+}
 
 
 
@@ -18,10 +31,10 @@ include_once("header.php");
 	<form action="publish.php" method="POST" enctype="multipart/form-data" class="form-group">
 		<div class="form-group">	
 			<label>Title: </label>
-			<input type="text" name="title" class="form-control"/> <br/>
+			<input type="text" name="title" class="form-control"/>
 			
 			<label>Description: </label>
-			<textarea name="description" rows="10" cols="50" class="form-control"></textarea> <br/>
+			<textarea name="description" rows="10" cols="50" class="form-control"></textarea>
 			
 			<label>Categories: </label>
 			<select multiple name="categories" id="categories" class="form-select">
@@ -32,12 +45,12 @@ include_once("header.php");
 					}
 				?>
 			</select></br>
-            
+
 			<label>Image: </label>
-			<input type="file" name="image" id="image"  class="form-control-file"/> <br/>
+			<input type="file" name="image" id="image"  class="form-control-file"/> <br/><br/>
 			
 			<input type="submit" name="submit" value="Publish Ad" class="btn btn-success"/> <br/>
-			<label class="text-warning"><?php echo $error; ?></label>
+			<label class="text-danger"><?php echo $error; ?></label>
 		</div>				
 	</form>
 <div>
