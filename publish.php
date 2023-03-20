@@ -126,16 +126,16 @@ $categories = getCategories();
 			<textarea name="description" rows="10" cols="50" class="form-control"></textarea>
 			
 			<label>Categories: </label>
-			<?php foreach($categories as $kategorija) : ?>
-        <div class="form-check">
+			<?php foreach($categories as $category) : ?>
+				<div class="form-check">
 
-            <input name="categories[]" value="<?php echo $kategorija['id']; ?>" class="form-check-input" type="checkbox">
-            <label class="form-check-label">
-                <?php echo $kategorija['name']; ?>
-            </label>
+				<input name="categories[]" value="<?php echo $category['id']; ?>" class="form-check-input" type="checkbox">
+				<label class="form-check-label">
+					<?php echo $category['name']; ?>
+				</label>
 
-        </div>
-        <?php endforeach?>
+				</div>
+        	<?php endforeach?>
 
 			<label>Image: </label>
 			<input type="file" name="image" id="image"  class="form-control-file"/> <br/><br/>
