@@ -54,7 +54,7 @@ foreach($ads as $ad){
 		
 		
 		<a href="edit.php?id=<?php echo $ad->id;?>"><button class="btn btn-primary">Edit</button></a>
-		<a href="delete_ad.php?id=<?php echo $ad->id;?>&title=<?php echo $ad->title;?>"><button class="btn btn-danger">Delete</button></a></br>
+		<a href="delete.php?id=<?php echo $ad->id;?>&title=<?php echo $ad->title;?>"><button class="btn btn-danger">Delete</button></a></br>
 		</div>
 	</div>
 	<?php
