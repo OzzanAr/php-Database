@@ -34,6 +34,7 @@ function edit($rowId, $title, $desc, $categories ,$img){
 	}
 }
 
+// Reciving the ids of the ads_category table
 function getIdAdsCategories($rowId){
     global $conn;
     $res = array();
@@ -48,6 +49,7 @@ function getIdAdsCategories($rowId){
     return $array;
 }
 
+// Cheacking the inserted image
 function imageCheck($img){
 	$target_dir = "uploads/";
 	$target_file = $target_dir . basename($img["name"]);
@@ -98,6 +100,7 @@ function imageCheck($img){
 	}
 }
 
+// All of the data from the post
 function getData($id){
 	global $conn;
 	$query = "SELECT * FROM ads WHERE id = '$id'";
@@ -106,6 +109,7 @@ function getData($id){
 	return $res;
 }
 
+// Getting the categories
 function getCategories(){
 	global $conn;
 	$query = "SELECT * FROM category";
@@ -122,6 +126,7 @@ function getCategories(){
 $error = "";
 $rowId = NULL;
 
+// Getting the id from the URL
 if (isset($_GET["id"])) {
     $rowId = intval($_GET["id"]);
 }

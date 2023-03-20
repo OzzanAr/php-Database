@@ -19,7 +19,7 @@ function get_categories($ad){
 	global $conn;
 
 	$currentAdID = $ad->id;
-
+	// Query to recive the category(ies) of the ad
 	$query = "SELECT category.name as category_name FROM category 
 	INNER JOIN ads_category ON category.id = ads_category.category_id 
 	WHERE ads_category.ads_id = $currentAdID";
@@ -40,6 +40,7 @@ foreach($ads as $ad){
 	<div class="ad">
 		<h3 style="color:blue;"><?php echo $ad->title;?></h3>
 		<?php
+			// Displaying the catogories using the get_categories funciton
 			$categories = get_categories($ad);
 			foreach($categories as $category){
 				?>	

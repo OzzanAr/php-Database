@@ -34,6 +34,7 @@ else {
     $error = "Cannot read ID!";
 }
 
+// Cheacking for submit
 if(isset($_POST["submit"])){
 	if(delete_ad($rowId)){
 		header("Location: myads.php");
@@ -42,7 +43,7 @@ if(isset($_POST["submit"])){
 	else{
 		$error = "Error with deleting!";
 	}
-}
+} // If the user presses no gets sent back to myads page
 else if(isset($_POST["noSubmit"])){
 	header("Location: myads.php");
 	die();

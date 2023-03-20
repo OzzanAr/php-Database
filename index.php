@@ -44,7 +44,7 @@ foreach($ads as $ad){
 	<div class="container p-5 my-5 border">
 		<div class="ad" id="cl">
 			<a href="ad.php?user_id=<?php echo $ad->id;?>" style="text-decoration: none"><h2><?php echo $ad->title;?></h2></a>
-			
+			<!--Looping through the given categories and displaying them to the user-->
 			<?php
 			$categories = get_categories($ad);
 			foreach($categories as $category){
