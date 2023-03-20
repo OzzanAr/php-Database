@@ -3,20 +3,52 @@ include_once("header.php");
 
 $error = "";
 
-function publish($title, $desc, $category ,$img){
+function publish($title, $desc, $categories ,$img){
 	global $conn;
 	$title = mysqli_real_escape_string($conn, $title);
 	$desc = mysqli_real_escape_string($conn, $desc);
 	$user_id = $_SESSION["USER_ID"];
 
-
 	$path = imageCheck($img);
 	$path = mysqli_real_escape_string($conn, $path);
 
+	// Getting the time of submission
 	$unix_time = time();
 	$sql_timestamp = date('Y-m-d H:i:s', $unix_time);
 	$sub_time = date('Y-m-d H:i:s', strtotime($sql_timestamp . ' +1 hour')); // Add one hour to timestamp
 
+	$query = "INSERT INTO ads (title, description, user_id, image, submission_time)
+	VALUES('$title', '$desc', '$user_id','$path', '$sub_time');";
+				
+	// Sending the query into the database and using an if to check if anything is wrong
+	if($conn->query($query)){
+		$id_query = "SELECT id FROM ads WHERE submission_time = '$sub_time'";
+		$id_res = $conn->query($id_query);
+
+		$category_ids = getCategoryIDs($categories);
+
+		foreach($category_ids as $cat_id){
+			$category_query = "INSERT INTO ads_category(category_id, ads_id)
+			VALUES('$cat_id', '$id_res');";
+		}
+
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+function getCategoryIDs($categories){
+	$array = array();
+	foreach($categories as $category){
+		$query_category = "SELECT id FROM category WHERE name='$category'";
+		$res = $conn->query($query_category);
+		$row = $res->fetch_assoc();
+		array_push($array, $row['id']);
+	}
+
+	return $array;
 }
 
 function imageCheck($img){
@@ -57,7 +89,7 @@ function imageCheck($img){
 
 	// Check if $uploadOk is set to 0 by an error
 	if ($uploadOk == 0) {
-		$error = "Sorry, your file was not uploaded.";	
+		$error = "Sorry, your file was not uploaded; ". $imageError;	
 	} 
 	// if everything is ok, try to upload file
 	else {
@@ -68,7 +100,6 @@ function imageCheck($img){
 		}
 	}
 }
-
 
 function getCategories(){
    global $conn;
