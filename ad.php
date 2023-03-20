@@ -6,7 +6,7 @@ include_once('header.php');
 function get_ad($id){
 	global $conn;
 	$id = mysqli_real_escape_string($conn, $id);
-	$query = "SELECT ads.*, users.username FROM ads 
+	$query = "SELECT ads.*, users.username, ads.views FROM ads 
 	LEFT JOIN users ON users.id = ads.user_id WHERE ads.id = $id;";
 
 	$res = $conn->query($query);
@@ -49,6 +49,18 @@ if($ad == null){
 // Base64 code for the image (hexadecimal notation of bytes from the file)
 $img_data = base64_encode($ad->image);
 
+// Check if the ad has been viewed by the current user
+$cookie_name = 'ad_' . $id;
+if(!isset($_COOKIE[$cookie_name])){
+	// Increment the 'views' column in the 'ads' table
+	$views = $ad->views + 1;
+	$query = "UPDATE ads SET views = $views WHERE id = $id;";
+	$conn->query($query);
+
+	// Set a cookie to prevent the view from being counted multiple times for the same user
+	setcookie($cookie_name, 1, time() + (86400 * 30), "/"); // 1 day
+}
+
 ?>
 <div class="container p-5 my-5 border"">
 	<div class="ad">
@@ -66,6 +78,7 @@ $img_data = base64_encode($ad->image);
 		
 		<img src="<?php echo $ad->image ?>" class="rounded"/><br>
 		<h6>Ad created by user: <?php echo $ad->username; ?></h6>
+		<p>Views: <?php echo $ad->views; ?></p>
 		<a href="index.php"><button class="btn btn-primary">Back</button></a>
 	</div>
 </div>
