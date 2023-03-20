@@ -25,6 +25,11 @@
   			float: none;
   			vertical-align: top;
         }
+
+        img {
+			width: 250px; /* set the width to 250 pixels */
+			height: 250px; /* set the height to 250 pixels */
+		}
     </style>
 </head>
 
