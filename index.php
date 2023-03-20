@@ -21,9 +21,9 @@ function get_categories($ad){
 
 	$currentAdID = $ad->id;
 
-	$query = "SELECT category.name as category_name FROM category
-	INNER JOIN ads_category ON $currentAdID = ads_category.ads_id
-	INNER JOIN ads ON category.id = ads_category.category_id";
+	$query = "SELECT category.name as category_name FROM category 
+	INNER JOIN ads_category ON category.id = ads_category.category_id 
+	WHERE ads_category.ads_id = $currentAdID";
 	
 	$res = $conn->query($query);
 	$categories = array();

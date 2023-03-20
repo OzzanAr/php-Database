@@ -8,10 +8,7 @@ function publish($title, $desc, $categories ,$img){
 	$title = mysqli_real_escape_string($conn, $title);
 	$desc = mysqli_real_escape_string($conn, $desc);
 	$user_id = $_SESSION["USER_ID"];
-
 	$path = imageCheck($img);
-	$path = mysqli_real_escape_string($conn, $path);
-
 	// Getting the time of submission
 	$unix_time = time();
 	$sql_timestamp = date('Y-m-d H:i:s', $unix_time);
@@ -22,14 +19,15 @@ function publish($title, $desc, $categories ,$img){
 				
 	// Sending the query into the database and using an if to check if anything is wrong
 	if($conn->query($query)){
+		$conn->insert_id;
 		$id_query = "SELECT id FROM ads WHERE submission_time = '$sub_time'";
 		$id_res = $conn->query($id_query);
+		$row = $id_res->fetch_assoc();
+		$current_ad_id = $row['id'];
 
-		$category_ids = getCategoryIDs($categories);
-
-		foreach($category_ids as $cat_id){
-			$category_query = "INSERT INTO ads_category(category_id, ads_id)
-			VALUES('$cat_id', '$id_res');";
+		foreach($categories as $cat_id){
+			$category_query = "INSERT INTO ads_category (category_id, ads_id) VALUES('$cat_id', '$current_ad_id');";
+			$conn->query($category_query);
 		}
 
 		return true;
@@ -37,18 +35,6 @@ function publish($title, $desc, $categories ,$img){
 	else{
 		return false;
 	}
-}
-
-function getCategoryIDs($categories){
-	$array = array();
-	foreach($categories as $category){
-		$query_category = "SELECT id FROM category WHERE name='$category'";
-		$res = $conn->query($query_category);
-		$row = $res->fetch_assoc();
-		array_push($array, $row['id']);
-	}
-
-	return $array;
 }
 
 function imageCheck($img){
@@ -102,26 +88,31 @@ function imageCheck($img){
 }
 
 function getCategories(){
-   global $conn;
-	$query = "SELECT name FROM category";
+	global $conn;
+	$query = "SELECT * FROM category";
 	$result = $conn->query($query);
 	$categories = array();
 
-	if($result->num_rows > 0){
-		while($row = $result->fetch_assoc()){
-			$categories[] = $row['name'];
-		}
+	
+	while($row = $result->fetch_assoc()){
+		array_push($categories, $row);
 	}
+	
 
 	return $categories;
 }
 
+if(isset($_POST["submit"])){
+	if(publish($_POST["title"], $_POST["description"] , $_POST["categories"], $_FILES["image"])){
+		header("Location: index.php");
+		die();
+	}
+	else{
+		$error = "Error with publishing ad!";
+	}
+}
 
-
-
-
-
-
+$categories = getCategories();
 
 ?>
 <div class="container">
@@ -135,14 +126,16 @@ function getCategories(){
 			<textarea name="description" rows="10" cols="50" class="form-control"></textarea>
 			
 			<label>Categories: </label>
-			<select multiple name="categories" id="categories" class="form-select">
-				<?php
-					$categories = getCategories();
-					foreach($categories as $category){
-						echo "<option value=\"".$category."\">".$category."</option>";
-					}
-				?>
-			</select></br>
+			<?php foreach($categories as $kategorija) : ?>
+        <div class="form-check">
+
+            <input name="categories[]" value="<?php echo $kategorija['id']; ?>" class="form-check-input" type="checkbox">
+            <label class="form-check-label">
+                <?php echo $kategorija['name']; ?>
+            </label>
+
+        </div>
+        <?php endforeach?>
 
 			<label>Image: </label>
 			<input type="file" name="image" id="image"  class="form-control-file"/> <br/><br/>
